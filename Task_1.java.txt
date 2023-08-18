@@ -1,0 +1,75 @@
+import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.Scanner;
+
+public class PasswordGenerator {
+
+    private static final String UPPERCASE_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private static final String LOWERCASE_LETTERS = "abcdefghijklmnopqrstuvwxyz";
+    private static final String NUMBERS = "0123456789";
+    private static final String SYMBOLS = "!@#$%^&*()-_=+[]{}\\|;:'\",<.>/?";
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Prompt the user to enter the desired length of the password
+        System.out.print("Enter the desired length of the password: ");
+        int length = scanner.nextInt();
+
+        // Prompt the user to choose the character types to include in the password
+        System.out.println("Choose the character types to include in the password:");
+        System.out.println("1. Uppercase letters");
+        System.out.println("2. Lowercase letters");
+        System.out.println("3. Numbers");
+        System.out.println("4. Symbols");
+        System.out.print("Enter your choices (comma-separated): ");
+        String choices = scanner.next();
+
+        // Generate the password
+        String password = generatePassword(length, choices);
+
+        // Display the generated password
+        System.out.println("Generated Password: " + password);
+    }
+
+    public static String generatePassword(int length, String choices) {
+        if (length < 1 || choices.isEmpty()) {
+            throw new IllegalArgumentException("Invalid input. Password length must be greater than 0 and at least one character type should be selected.");
+        }
+
+        List<String> characterSets = new ArrayList<>();
+
+        for (String choice : choices.split(",")) {
+            switch (choice.trim()) {
+                case "1":
+                    characterSets.add(UPPERCASE_LETTERS);
+                    break;
+                case "2":
+                    characterSets.add(LOWERCASE_LETTERS);
+                    break;
+                case "3":
+                    characterSets.add(NUMBERS);
+                    break;
+                case "4":
+                    characterSets.add(SYMBOLS);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Invalid choice: " + choice);
+            }
+        }
+
+        Random random = new SecureRandom();
+        StringBuilder passwordBuilder = new StringBuilder(length);
+
+        for (int i = 0; i < length; i++) {
+            String characterSet = characterSets.get(random.nextInt(characterSets.size()));
+            char randomChar = characterSet.charAt(random.nextInt(characterSet.length()));
+            passwordBuilder.append(randomChar);
+        }
+
+        return passwordBuilder.toString();
+    }
+}
+
